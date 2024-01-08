@@ -1,4 +1,18 @@
 const {JSDOM} = require('jsdom')
+const fs = require('fs')
+
+
+function write(content){
+    fs.appendFile('output.txt', `${content} \n`, (err) => {
+        if (err) {
+          console.error('Error appending to file:', err);
+          return;
+        }
+        console.log('Content appended to file successfully!');
+    });
+}
+
+
 
 
 async function crawlPage(baseURL, currentURL, pages){
@@ -20,7 +34,9 @@ async function crawlPage(baseURL, currentURL, pages){
 
     pages[noralizedCurrentURL] = 1;
 
-    console.log(`actively crawling: ${currentURL}`);
+    // console.log(`actively crawling: ${currentURL}`);
+
+    write(currentURL);
 
 
     try{
@@ -65,6 +81,7 @@ function getURLsFromHTML(htmlBody, baseURL){
         if(linkElement.href.slice(0,1) === '/'){
             try{
                 const urlObj = new URL(`${baseURL}${linkElement.href}`)
+                // console.log(urlObj.href);
                 urls.push(urlObj.href);
             }catch(err){
                 console.log(`error with relative url ${err.message}`)
@@ -81,9 +98,7 @@ function getURLsFromHTML(htmlBody, baseURL){
         
     }
 
-    for(const url of urls){
-        console.log(url);
-    }
+    
     
     return urls
 }
